@@ -11,7 +11,7 @@
     "deploy": "next build && gcloud app deploy",
     "storybook": "start-storybook -p 6006 -s ./public",
     "build-storybook": "build-storybook",
-    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen": "graphql-codegen --config codegen.yaml",
     "prepare": "husky install"
   },
   "dependencies": {
