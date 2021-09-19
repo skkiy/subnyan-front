@@ -13,7 +13,7 @@ const SignIn: NextPage = () => {
     },
   })
 
-  const { user, signInWithEmailAndPassword } = useAuthState()
+  const { user, loading: userLoading, signInWithEmailAndPassword } = useAuthState()
 
   useEffect(() => {
     if (!user) return

@@ -19,11 +19,13 @@ if (apps.length == 0) {
 
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
   const auth = getAuth()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (_user) => {
       setUser(_user)
+      setLoading(false)
     })
     return () => {
       unsubscribe()
@@ -42,6 +44,7 @@ export const useAuthState = () => {
   }
   return {
     user,
+    loading,
     signInWithEmailAndPassword: handleSignInWithEmailAndPassword,
   }
 }
