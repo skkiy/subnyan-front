@@ -1,0 +1,26 @@
+# scalar
+scalar Time
+scalar Cursor
+
+# interface
+interface Node {
+    id: ID!
+}
+
+interface Edge {
+    node: Node
+    cursor: Cursor!
+}
+
+interface PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: Cursor!
+    endCursor: Cursor!
+}
+
+interface Connection {
+    pageInfo: PageInfo!
+    edges: [Edge!]!
+    totalCount: Int!
+}

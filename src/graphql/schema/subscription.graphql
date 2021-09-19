@@ -1,0 +1,62 @@
+enum PaymentIntervalStatus {
+    ONE_MONTH
+    THREE_MONTH
+    SIX_MONTH
+    TWELVE_MONTH
+}
+
+enum SubscriptionOrderKey {
+    NAME
+    price
+    PAYMENT_INTERVAL
+    CREATED_AT
+    PAYMENT_DATE
+}
+
+type SubscriptionNode implements Node {
+    id: ID!
+    name: String!
+    description: String!
+    price: Int!
+    paymentDate: Time!
+    paymentInterval: PaymentIntervalStatus!
+    cancelPageLink: String!
+    createdAt: Time!
+    updatedAt: Time!
+    disabled: Boolean!
+}
+
+type SubscriptionEdge implements Edge {
+    node: SubscriptionNode
+    cursor: Cursor!
+}
+
+type SubscriptionConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [SubscriptionEdge!]!
+    totalCount: Int!
+}
+
+input NewSubscription {
+    name: String!
+    description: String!
+    price: Int!
+    paymentDate: Time!
+    paymentInterval: PaymentIntervalStatus!
+    cancelPageLink: String!
+}
+
+input UpdateSubscription {
+    id: ID!
+    name: String!
+    description: String!
+    price: Int!
+    paymentDate: Time!
+    paymentInterval: PaymentIntervalStatus!
+    cancellPageLink: String!
+    disabled: Boolean
+}
+
+input DeleteSubscription {
+    id: ID!
+}

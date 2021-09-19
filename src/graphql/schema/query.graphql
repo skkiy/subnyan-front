@@ -1,0 +1,44 @@
+enum Role {
+    ADMIN
+    OWNER
+    USER
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+input OrderKey {
+    subscription: SubscriptionOrderKey
+}
+
+enum OrderDirection {
+    ASC
+    DESC
+}
+
+input EdgeOrder {
+    key: OrderKey!
+    direction: OrderDirection!
+}
+
+# type
+type Hello {
+    message: String!
+}
+
+# query
+type Query {
+    hello(name: String!): Hello!
+    subscriptions(edgeOrder: EdgeOrder): SubscriptionConnection!
+    getUser: User! @hasRole(role: USER)
+    getSubscription(id: String!): SubscriptionNode! @hasRole(role: USER)
+}
+
+# mutation
+type Mutation {
+    createSubscription(input: NewSubscription!): SubscriptionNode!
+    updateSubscription(input: UpdateSubscription!): SubscriptionNode!
+    deleteSubscription(input: DeleteSubscription!): Node!
+    createUser(input :CreateUser!): User! @hasRole(role: USER)
+    updateUser(input: UpdateUser!): User!
+    deleteUser: Node!
+}

@@ -1,0 +1,14 @@
+type User implements Node {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+input CreateUser {
+    name: String!
+    email: String!
+}
+
+input UpdateUser {
+    name: String!
+}
