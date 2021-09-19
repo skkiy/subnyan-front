@@ -1,13 +1,6 @@
-import {
-  ApolloClient,
-  ApolloLink,
-  createHttpLink,
-  HttpLink,
-  InMemoryCache,
-  useApolloClient,
-} from "@apollo/client"
+import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from "@apollo/client"
 import { onError } from "@apollo/client/link/error"
-import { getAuth } from "lib/auth"
+import { getAuth } from "firebase/auth"
 import { setContext } from "@apollo/client/link/context"
 
 const API_URL = "http://localhost:8080"

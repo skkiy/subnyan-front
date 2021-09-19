@@ -1,5 +1,6 @@
-import { initializeApp } from "firebase/app"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { initializeApp, getApps } from "firebase/app"
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, User } from "firebase/auth"
+import { useEffect, useState } from "react"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,17 +12,36 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-const app = initializeApp(firebaseConfig)
+const apps = getApps()
+if (apps.length == 0) {
+  initializeApp(firebaseConfig)
+}
 
-export { getAuth }
-export const signIn = (email: string, password: string) => {
+export const useAuthState = () => {
+  const [user, setUser] = useState<User | null>(null)
   const auth = getAuth()
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCred) => {
-      console.log(userCred)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (_user) => {
+      setUser(_user)
     })
-    .catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message
-    })
+    return () => {
+      unsubscribe()
+    }
+  }, [auth])
+
+  const handleSignInWithEmailAndPassword = (email: string, password: string) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCred) => {
+        console.log(userCred)
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+      })
+  }
+  return {
+    user,
+    signInWithEmailAndPassword: handleSignInWithEmailAndPassword,
+  }
 }

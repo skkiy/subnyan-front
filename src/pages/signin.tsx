@@ -1,33 +1,47 @@
 import type { NextPage } from "next"
-import { getAuth, signIn } from "lib/auth"
-import { useHelloUserQuery } from "graphql/generated"
-import { useEffect } from "react"
+import { useAuthState } from "lib/auth"
+import { useHelloUserLazyQuery } from "graphql/generated"
+import { useEffect, useState } from "react"
 
 const SignIn: NextPage = () => {
-  const email = "sasayu1027@gmail.com"
-  const password = "abcd1234"
-  const { loading, error, data, refetch } = useHelloUserQuery({
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const [fetch, { called, loading, data }] = useHelloUserLazyQuery({
     variables: {
-      name: "tetete",
+      name: email,
     },
   })
 
-  const user = getAuth().currentUser
+  const { user, signInWithEmailAndPassword } = useAuthState()
 
   useEffect(() => {
-    console.log(user)
     if (!user) return
-    refetch({
-      name: user.email ?? "",
-    }).then((res) => {
-      console.log(res)
-    })
+    fetch()
   }, [user])
+
+  useEffect(() => {
+    if (called && !loading) {
+      console.log(data)
+    }
+  }, [called, loading])
 
   return (
     <div>
       <h1>SignIn</h1>
-      <button onClick={() => signIn(email, password)}>おす</button>
+      <input
+        name={"email"}
+        type={"email"}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        name={"password"}
+        type={"password"}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={() => signInWithEmailAndPassword(email, password)}>おす</button>
     </div>
   )
 }
