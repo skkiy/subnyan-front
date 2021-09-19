@@ -2,14 +2,15 @@ import type { NextPage } from "next"
 import Head from "next/head"
 import Image from "next/image"
 import styles from "styles/Home.module.css"
-import { useHelloQuery } from "../graphql/generated"
+import { useHelloUserQuery } from "../graphql/generated"
 
 const Home: NextPage = () => {
-  const { loading, error, data } = useHelloQuery({
+  const { loading, error, data } = useHelloUserQuery({
     variables: {
       name: "tetete",
     },
   })
+
   return (
     <div className={styles.container}>
       <Head>

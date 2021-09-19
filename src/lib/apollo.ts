@@ -1,5 +1,14 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, useApolloClient } from "@apollo/client"
+import {
+  ApolloClient,
+  ApolloLink,
+  createHttpLink,
+  HttpLink,
+  InMemoryCache,
+  useApolloClient,
+} from "@apollo/client"
 import { onError } from "@apollo/client/link/error"
+import { getAuth } from "lib/auth"
+import { setContext } from "@apollo/client/link/context"
 
 const API_URL = "http://localhost:8080"
 
@@ -15,11 +24,24 @@ export const createApolloClient = () => {
     }
   })
 
-  const httpLink = new HttpLink({ uri: `${API_URL}/query` })
+  const httpLink = createHttpLink({
+    uri: `${API_URL}/query`,
+  })
 
+  const authLink = setContext(async (_, { headers }) => {
+    const auth = getAuth()
+    if (!auth || !auth.currentUser) return headers
+    const token = await auth.currentUser.getIdToken(true)
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    }
+  })
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: ApolloLink.from([errorLink, httpLink]),
+    link: ApolloLink.from([authLink, httpLink, errorLink]),
     cache: new InMemoryCache(),
   })
 }

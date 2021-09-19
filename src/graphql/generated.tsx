@@ -182,48 +182,57 @@ export type User = Node & {
   name: Scalars["String"]
 }
 
-export type HelloQueryVariables = Exact<{
+export type HelloUserQueryVariables = Exact<{
   name: Scalars["String"]
 }>
 
-export type HelloQuery = { __typename?: "Query"; hello: { __typename?: "Hello"; message: string } }
+export type HelloUserQuery = {
+  __typename?: "Query"
+  hello: { __typename?: "Hello"; message: string }
+  getUser: { __typename?: "User"; id: string; name: string; email: string }
+}
 
-export const HelloDocument = gql`
-  query Hello($name: String!) {
+export const HelloUserDocument = gql`
+  query HelloUser($name: String!) {
     hello(name: $name) {
       message
+    }
+    getUser {
+      id
+      name
+      email
     }
   }
 `
 
 /**
- * __useHelloQuery__
+ * __useHelloUserQuery__
  *
- * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
- * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useHelloUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHelloUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useHelloQuery({
+ * const { data, loading, error } = useHelloUserQuery({
  *   variables: {
  *      name: // value for 'name'
  *   },
  * });
  */
-export function useHelloQuery(
-  baseOptions: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>
+export function useHelloUserQuery(
+  baseOptions: Apollo.QueryHookOptions<HelloUserQuery, HelloUserQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options)
+  return Apollo.useQuery<HelloUserQuery, HelloUserQueryVariables>(HelloUserDocument, options)
 }
-export function useHelloLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>
+export function useHelloUserLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<HelloUserQuery, HelloUserQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options)
+  return Apollo.useLazyQuery<HelloUserQuery, HelloUserQueryVariables>(HelloUserDocument, options)
 }
-export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>
-export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>
-export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>
+export type HelloUserQueryHookResult = ReturnType<typeof useHelloUserQuery>
+export type HelloUserLazyQueryHookResult = ReturnType<typeof useHelloUserLazyQuery>
+export type HelloUserQueryResult = Apollo.QueryResult<HelloUserQuery, HelloUserQueryVariables>
