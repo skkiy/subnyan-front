@@ -1,22 +1,22 @@
-import { SignInForm } from "components/signin"
+import { SignUpForm } from "components/signup"
 import type { NextPage } from "next"
 import Link from "next/link"
-import { Box, Center, Text, Stack } from "@chakra-ui/react"
+import { Center, Text, Stack } from "@chakra-ui/react"
 import { Layout } from "components/layouts/layout"
 
-const SignIn: NextPage = () => {
+const SignUp: NextPage = () => {
   return (
     <Layout>
       <Center p={4}>
         <Stack spacing={4} w={"70%"} maxW={"700px"}>
           <Text fontSize={["20px", "24px", "24px"]} fontWeight={"bold"}>
-            ログイン
+            新規登録
           </Text>
-          <SignInForm />
+          <SignUpForm />
           <Center>
-            <Link href={"/signup"}>
+            <Link href={"/signin"}>
               <Text decoration={"underline"} cursor={"pointer"} fontSize={["14px", "16px"]}>
-                新規登録
+                ログイン
               </Text>
             </Link>
           </Center>
@@ -26,4 +26,4 @@ const SignIn: NextPage = () => {
   )
 }
 
-export default SignIn
+export default SignUp

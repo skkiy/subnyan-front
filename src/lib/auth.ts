@@ -1,5 +1,15 @@
 import { initializeApp, getApps } from "firebase/app"
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, User } from "firebase/auth"
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  User,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  TwitterAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth"
 import { useEffect, useState } from "react"
 
 const firebaseConfig = {
@@ -32,19 +42,89 @@ export const useAuthState = () => {
     }
   }, [auth])
 
-  const handleSignInWithEmailAndPassword = (email: string, password: string) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCred) => {
-        console.log(userCred)
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-      })
-  }
   return {
     user,
     loading,
-    signInWithEmailAndPassword: handleSignInWithEmailAndPassword,
   }
+}
+
+export const handleSignUpWithEmailAndPassword = async (
+  email: string,
+  password: string
+): Promise<{ data: User | undefined; error: any }> => {
+  const auth = getAuth()
+  const { data, error } = await createUserWithEmailAndPassword(auth, email, password)
+    .then((userCred) => {
+      return { data: userCred.user, error: undefined }
+    })
+    .catch((error) => {
+      return { data: undefined, error: error }
+    })
+  return { data, error }
+}
+
+export const handleSignInWithEmailAndPassword = async (
+  email: string,
+  password: string
+): Promise<{ data: User | undefined; error: any }> => {
+  const auth = getAuth()
+  const { data, error } = await signInWithEmailAndPassword(auth, email, password)
+    .then((userCred) => {
+      return { data: userCred.user, error: undefined }
+    })
+    .catch((error) => {
+      return { data: undefined, error: error }
+    })
+  return { data, error }
+}
+
+export const handleLoginWithGoogle = () => {
+  const auth = getAuth()
+  const provider = new GoogleAuthProvider()
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const token = credential?.accessToken
+      const user = result.user
+    })
+    .catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      // The email of the user's account used.
+      const email = error.email
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error)
+    })
+}
+
+export const handleLoginWithTwitter = () => {
+  const auth = getAuth()
+  const provider = new TwitterAuthProvider()
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const credential = TwitterAuthProvider.credentialFromResult(result)
+      const token = credential?.accessToken
+      const secret = credential?.secret
+      const user = result.user
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      // The email of the user's account used.
+      const email = error.email
+      // The AuthCredential type that was used.
+      const credential = TwitterAuthProvider.credentialFromError(error)
+    })
+}
+
+export const handleSendEmailVerification = async (user: User): Promise<{ error: any }> => {
+  const res = await sendEmailVerification(user)
+    .then(() => {
+      return { error: undefined }
+    })
+    .catch((error) => {
+      return { error: error }
+    })
+  return res
 }

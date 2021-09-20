@@ -16,6 +16,11 @@ export type Scalars = {
   Time: any
 }
 
+export type Backward = {
+  before?: Maybe<Scalars["Cursor"]>
+  last: Scalars["Int"]
+}
+
 export type Connection = {
   edges: Array<Edge>
   pageInfo: PageInfo
@@ -39,6 +44,11 @@ export type Edge = {
 export type EdgeOrder = {
   direction: OrderDirection
   key: OrderKey
+}
+
+export type Forward = {
+  after?: Maybe<Scalars["Cursor"]>
+  first: Scalars["Int"]
 }
 
 export type Hello = {
@@ -95,7 +105,15 @@ export type OrderKey = {
   subscription?: Maybe<SubscriptionOrderKey>
 }
 
+export type PageCondition = {
+  backward?: Maybe<Backward>
+  forward?: Maybe<Forward>
+  limit?: Maybe<Scalars["Int"]>
+  pageNumber: Scalars["Int"]
+}
+
 export type PageInfo = {
+  __typename?: "PageInfo"
   endCursor: Scalars["Cursor"]
   hasNextPage: Scalars["Boolean"]
   hasPreviousPage: Scalars["Boolean"]
@@ -106,22 +124,24 @@ export type PaymentIntervalStatus = "ONE_MONTH" | "SIX_MONTH" | "THREE_MONTH" | 
 
 export type Query = {
   __typename?: "Query"
-  getSubscription: SubscriptionNode
-  getUser: User
   hello: Hello
+  me: User
+  subscription: SubscriptionNode
   subscriptions: SubscriptionConnection
-}
-
-export type QueryGetSubscriptionArgs = {
-  id: Scalars["String"]
 }
 
 export type QueryHelloArgs = {
   name: Scalars["String"]
 }
 
+export type QuerySubscriptionArgs = {
+  id: Scalars["String"]
+}
+
 export type QuerySubscriptionsArgs = {
-  edgeOrder?: Maybe<EdgeOrder>
+  edgeOrder: EdgeOrder
+  filterCondition: SubscriptionFilterCondition
+  pageCondition?: Maybe<PageCondition>
 }
 
 export type Role = "ADMIN" | "OWNER" | "USER"
@@ -137,6 +157,11 @@ export type SubscriptionEdge = Edge & {
   __typename?: "SubscriptionEdge"
   cursor: Scalars["Cursor"]
   node?: Maybe<SubscriptionNode>
+}
+
+export type SubscriptionFilterCondition = {
+  disabled?: Maybe<Scalars["Boolean"]>
+  userId: Scalars["String"]
 }
 
 export type SubscriptionNode = Node & {
@@ -184,23 +209,67 @@ export type User = Node & {
 
 export type HelloUserQueryVariables = Exact<{
   name: Scalars["String"]
+  userId: Scalars["String"]
 }>
 
 export type HelloUserQuery = {
   __typename?: "Query"
   hello: { __typename?: "Hello"; message: string }
-  getUser: { __typename?: "User"; id: string; name: string; email: string }
+  me: { __typename?: "User"; id: string; name: string; email: string }
+  subscriptions: {
+    __typename?: "SubscriptionConnection"
+    totalCount: number
+    pageInfo: {
+      __typename?: "PageInfo"
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor: any
+      endCursor: any
+    }
+    edges: Array<{
+      __typename?: "SubscriptionEdge"
+      cursor: any
+      node?: Maybe<{
+        __typename?: "SubscriptionNode"
+        id: string
+        name: string
+        price: number
+        disabled: boolean
+      }>
+    }>
+  }
 }
 
 export const HelloUserDocument = gql`
-  query HelloUser($name: String!) {
+  query HelloUser($name: String!, $userId: String!) {
     hello(name: $name) {
       message
     }
-    getUser {
+    me {
       id
       name
       email
+    }
+    subscriptions(
+      filterCondition: { userId: $userId }
+      edgeOrder: { key: { subscription: NAME }, direction: ASC }
+    ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      edges {
+        cursor
+        node {
+          id
+          name
+          price
+          disabled
+        }
+      }
     }
   }
 `
@@ -218,6 +287,7 @@ export const HelloUserDocument = gql`
  * const { data, loading, error } = useHelloUserQuery({
  *   variables: {
  *      name: // value for 'name'
+ *      userId: // value for 'userId'
  *   },
  * });
  */

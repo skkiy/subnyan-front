@@ -37,6 +37,11 @@ type SubscriptionConnection implements Connection {
     totalCount: Int!
 }
 
+input SubscriptionFilterCondition {
+    userId: String!
+    disabled: Boolean
+}
+
 input NewSubscription {
     name: String!
     description: String!

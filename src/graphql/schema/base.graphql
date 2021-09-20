@@ -2,6 +2,24 @@
 scalar Time
 scalar Cursor
 
+# input
+input PageCondition {
+    backward: Backward
+    forward: Forward
+    pageNumber: Int!
+    limit: Int
+}
+
+input Backward {
+    last: Int!
+    before: Cursor
+}
+
+input Forward {
+    first: Int!
+    after: Cursor
+}
+
 # interface
 interface Node {
     id: ID!
@@ -12,15 +30,16 @@ interface Edge {
     cursor: Cursor!
 }
 
-interface PageInfo {
-    hasNextPage: Boolean!
-    hasPreviousPage: Boolean!
-    startCursor: Cursor!
-    endCursor: Cursor!
-}
-
 interface Connection {
     pageInfo: PageInfo!
     edges: [Edge!]!
     totalCount: Int!
+}
+
+# type
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: Cursor!
+    endCursor: Cursor!
 }

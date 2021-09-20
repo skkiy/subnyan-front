@@ -28,9 +28,9 @@ type Hello {
 # query
 type Query {
     hello(name: String!): Hello!
-    subscriptions(edgeOrder: EdgeOrder): SubscriptionConnection!
-    getUser: User! @hasRole(role: USER)
-    getSubscription(id: String!): SubscriptionNode! @hasRole(role: USER)
+    me: User! @hasRole(role: USER)
+    subscriptions(pageCondition: PageCondition, filterCondition: SubscriptionFilterCondition!, edgeOrder: EdgeOrder!): SubscriptionConnection! @hasRole(role: USER)
+    subscription(id: String!): SubscriptionNode! @hasRole(role: USER)
 }
 
 # mutation
